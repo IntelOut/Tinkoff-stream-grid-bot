@@ -18,7 +18,7 @@ else:
 
 #main file
 shares = {
-    "UWGN": {"number": 6, "price_step": 3 / 100, "quantity": 1, "start_price": 0, "account_id": ACCID},
+    "IRAO": {"number": 6, "price_step": 3 / 100, "quantity": 1, "start_price": 0, "account_id": ACCID},
     # "SBER": {"number": 6, "price_step": 3 / 100, "quantity": 1, "start_price": 0, "account_id": ACCID},
     # "T": {"number": 2, "price_step": 3 / 100, "quantity": 1, "start_price": 0, "account_id": ACCID},
     # "DSKY": {"number": 2, "price_step": 3 / 100, "quantity": 1, "start_price": 0, "account_id": ACCID},
@@ -95,8 +95,7 @@ def main() -> int:
 
             # удаляем все открытые ордера
             account_id = share['account_id']
-            #тестово убираем отмену ордеров
-            #client.cancel_all_orders(account_id=account_id)
+            client.cancel_all_orders(account_id=account_id)
 
             # заполняем цены
             for i in range(share['number'] + 1):
