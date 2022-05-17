@@ -18,7 +18,7 @@ else:
 
 #main file
 shares = {
-    "IRAO": {"number": 6, "price_step": 3 / 100, "quantity": 1, "start_price": 0, "account_id": ACCID},
+    "UWGN": {"number": 6, "price_step": 1 / 100, "quantity": 1, "start_price": 0, "account_id": ACCID},
     # "SBER": {"number": 6, "price_step": 3 / 100, "quantity": 1, "start_price": 0, "account_id": ACCID},
     # "T": {"number": 2, "price_step": 3 / 100, "quantity": 1, "start_price": 0, "account_id": ACCID},
     # "DSKY": {"number": 2, "price_step": 3 / 100, "quantity": 1, "start_price": 0, "account_id": ACCID},
