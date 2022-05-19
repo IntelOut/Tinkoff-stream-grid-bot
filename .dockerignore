@@ -2,7 +2,9 @@
 LICENSE
 README.md
 __pycache__/
+venv/
 .DS_Store
 token.txt
 *.db
 *.sh
+*.log
