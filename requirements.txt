@@ -1,1 +1,4 @@
-tinkoff-investments~=0.2.0b27
+tinkoff-investments>=0.2.0b117
+psycopg2-binary>=2.9.0
+redis>=4.0.0
+python-dotenv>=0.19.0
