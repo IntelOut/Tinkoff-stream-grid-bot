@@ -1,9 +1,71 @@
-# Временный для тестов
+# Git
 .git
-LICENSE
-README.md
-__pycache__/
-.DS_Store
-token.txt
+.gitignore
+.gitattributes
+
+# Переменные окружения
+.env
+.env.*
+.env.local
+
+# Базы данных
 *.db
-*.sh
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv
+env
+.venv
+.virtualenv
+*.egg-info
+*.egg
+
+# VSCode
+.vscode
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+*.code-workspace
+
+# IDE
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Логи
+*.log
+logs
+log
+
+# Тесты и отладка
+.pytest_cache
+.coverage
+htmlcov
+.tox
+.mypy_cache
+.dmypy.json
+.python-version
+
+# Документация
+README.md
+docs
+
+# Временные файлы
+*.tmp
+*.temp
+*.bak
+
+# Исходники для разработки
+tests
+test
+examples
+docker-compose.yml
+Dockerfile

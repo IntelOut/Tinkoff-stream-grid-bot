@@ -1,3 +1,88 @@
-token.txt
+# Переменные окружения
+.env
+.env.local
+.env.*.local
+
+# Базы данных
 *.db
-*.sh
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+.virtualenv/
+
+# VSCode
+.vscode/
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/extensions.json
+*.code-workspace
+
+# IDE (другие)
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.directory
+
+# Логи
+*.log
+logs/
+log/
+bot.log
+
+# Распространение / упаковка
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Тестирование
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+
+# Докер
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Временные файлы
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Файлы проекта
+token.txt
+*.pyc
