@@ -22,6 +22,8 @@ from t_tech.invest import (
     Quotation,
     OrderExecutionReportStatus,
     RequestError,
+    AioRequestError,
+    AioUnauthenticatedError,
     OrderState,
 )
 
@@ -523,7 +525,7 @@ class GridTradingBot:
                 logger.info(f"Создан ордер: {share_info['ticker']} цена={price} направление={direction}")
                 return order.order_id
                 
-        except RequestError as e:
+        except (RequestError, AioRequestError, AioUnauthenticatedError) as e:
             logger.error(f"Ошибка при создании ордера для {share_info['ticker']} по цене {price}: {e}")
             # Ошибка 30079 означает, что торги по инструменту приостановлены
             if hasattr(e, 'details') and e.details == '30079':
@@ -638,7 +640,7 @@ class GridTradingBot:
                     
                     logger.info(f"Ордер {order_id} исполнен. Выставлен новый ордер на {action} {share_info['ticker']} по цене {new_price}")
                     
-            except RequestError as e:
+            except (RequestError, AioRequestError, AioUnauthenticatedError) as e:
                 logger.error(f"Ошибка при создании замещающего ордера: {e}")
         else:
             logger.warning(f"Новый ценовой индекс {new_price_index} вышел за границы сетки для {share_info['ticker']}")
