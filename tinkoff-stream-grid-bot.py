@@ -3,7 +3,7 @@
 Торговый бот для Тинькофф Инвестиции - Grid Trading стратегия
 Асинхронная версия с использованием библиотеки t-tech-investments
 """
-
+import os
 import asyncio
 import logging
 import signal
@@ -15,15 +15,15 @@ from typing import Dict, List, Optional, Any
 
 import aiosqlite
 from dotenv import load_dotenv
-from tinkoff.invest import (
-    Client,
+from t_tech.invest import (
+    AsyncClient,
     OrderType,
     OrderDirection,
     Quotation,
     OrderExecutionReportStatus,
     RequestError,
+    OrderState,
 )
-from tinkoff.invest.schemas import OrderState
 
 # Загружаем переменные окружения из файла .env
 load_dotenv()
@@ -47,7 +47,7 @@ class GridBotConfig:
         # Получаем основные настройки из переменных окружения
         self.token = self._get_env('TINKOFF_TOKEN')  # API токен Тинькофф
         self.account_id = self._get_env('TINKOFF_ACCOUNT_ID', required=False)  # ID счета (опционально)
-        self.db_path = self._get_env('DATABASE_PATH', 'sqlite_bot.db')  # Путь к файлу БД
+        self.db_path = self._get_env('DATABASE_PATH')  # Путь к файлу БД
         self.order_check_interval = int(self._get_env('ORDER_CHECK_INTERVAL', '60'))  # Интервал проверки ордеров (сек)
         
         # Настройки сетки по умолчанию
@@ -359,7 +359,7 @@ class GridTradingBot:
     
     async def init_shares(self):
         """Инициализация информации по торгуемым акциям"""
-        async with Client(self.config.token) as client:
+        async with AsyncClient(self.config.token) as client:
             # Получаем список всех акций от API
             response = await client.instruments.shares()
             
@@ -452,7 +452,7 @@ class GridTradingBot:
             share_info: Информация об акции
         """
         try:
-            async with Client(self.config.token) as client:
+            async with AsyncClient(self.config.token) as client:
                 account_id = share_info['account_id'] or await self._get_account_id()
                 await client.orders.cancel_all_orders(account_id=account_id)
                 logger.info(f"Отменены все ордера для {share_info['ticker']}")
@@ -469,7 +469,7 @@ class GridTradingBot:
         if self.config.account_id:
             return self.config.account_id
         
-        async with Client(self.config.token) as client:
+        async with AsyncClient(self.config.token) as client:
             accounts = await client.users.get_accounts()
             if accounts.accounts:
                 return accounts.accounts[0].id
@@ -491,7 +491,7 @@ class GridTradingBot:
             
             # Определяем направление ордера относительно текущей цены
             # Выше текущей цены - продажа (SELL), ниже - покупка (BUY)
-            async with Client(self.config.token) as client:
+            async with AsyncClient(self.config.token) as client:
                 last_price_response = await client.market_data.get_last_prices(figi=[share_info['figi']])
                 last_price = self._quotation_to_float(last_price_response.last_prices[0].price)
             
@@ -500,7 +500,7 @@ class GridTradingBot:
             # Генерируем уникальный ID ордера на основе времени
             order_id = str(int(asyncio.get_event_loop().time() * 1e9))
             
-            async with Client(self.config.token) as client:
+            async with AsyncClient(self.config.token) as client:
                 order = await client.orders.post_order(
                     account_id=account_id,
                     figi=share_info['figi'],
@@ -543,7 +543,7 @@ class GridTradingBot:
         await self.cancel_all_orders(share_info)
         
         # Получаем текущую рыночную цену
-        async with Client(self.config.token) as client:
+        async with AsyncClient(self.config.token) as client:
             last_price_response = await client.market_data.get_last_prices(figi=[share_info['figi']])
             last_price = self._quotation_to_float(last_price_response.last_prices[0].price)
         
@@ -582,7 +582,7 @@ class GridTradingBot:
         order_db_id, share_id, price = order
         
         # Получаем состояние ордера из API, чтобы узнать направление
-        async with Client(self.config.token) as client:
+        async with AsyncClient(self.config.token) as client:
             account_id = share_info['account_id'] or await self._get_account_id()
             order_state = await client.orders.get_order_state(
                 account_id=account_id,
@@ -614,7 +614,7 @@ class GridTradingBot:
             new_price = prices[new_price_index]
             
             try:
-                async with Client(self.config.token) as client:
+                async with AsyncClient(self.config.token) as client:
                     # Создаем новый ордер
                     new_order_id = str(int(asyncio.get_event_loop().time() * 1e9))
                     new_order = await client.orders.post_order(
@@ -649,7 +649,7 @@ class GridTradingBot:
         
         Подписываемся на стрим исполненных ордеров и обрабатываем их
         """
-        async with Client(self.config.token) as client:
+        async with AsyncClient(self.config.token) as client:
             async for response in client.orders_stream.trades_stream():
                 if not response.order_trades:
                     continue
